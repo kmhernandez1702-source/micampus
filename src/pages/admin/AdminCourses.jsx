@@ -87,7 +87,6 @@ export default function AdminCourses() {
   function openAddLesson(module) {
     setLessonForm({
       module_id: module.id,
-      course_id: module.course_id,
       name: '',
       description: '',
       video_id: '',
@@ -101,7 +100,7 @@ export default function AdminCourses() {
   }
 
   function openEditLesson(lesson, module) {
-    setLessonForm({ ...lesson, module_id: module.id, course_id: module.course_id })
+    setLessonForm({ ...lesson, module_id: module.id })
     setLessonModal({ type: 'edit', moduleName: module.name })
   }
 
