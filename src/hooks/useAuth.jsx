@@ -9,7 +9,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser(session.user)
@@ -19,11 +18,10 @@ export function AuthProvider({ children }) {
       }
     })
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         setUser(session.user)
-        await loadProfile(session.user.id)
+        loadProfile(session.user.id)
       } else {
         setUser(null)
         setProfile(null)
@@ -37,9 +35,10 @@ export function AuthProvider({ children }) {
   async function loadProfile(userId) {
     try {
       const p = await getProfile(userId)
-      setProfile(p)
+      setProfile(p || { id: userId, role: 'student', full_name: '', email: '' })
     } catch (e) {
       console.error('Error loading profile', e)
+      setProfile({ id: userId, role: 'student', full_name: '', email: '' })
     } finally {
       setLoading(false)
     }
