@@ -22,7 +22,7 @@ export default function AdminCourses() {
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState({})
   const [saving, setSaving] = useState(false)
-  const [expanded, setExpanded] = useState(null) // courseId being edited inline
+  const [expanded, setExpanded] = useState(null)
 
   useEffect(() => { loadData() }, [])
 
@@ -31,7 +31,6 @@ export default function AdminCourses() {
     try { setCourses(await getCourses()) } finally { setLoading(false) }
   }
 
-  // ── Course CRUD ──
   function openAddCourse() {
     setForm({ name: '', description: '', icon: '📚', color: '#e8f5f3' })
     setModal({ type: 'course' })
@@ -57,7 +56,6 @@ export default function AdminCourses() {
     await loadData()
   }
 
-  // ── Module CRUD ──
   const [moduleForm, setModuleForm] = useState({})
   const [addingModule, setAddingModule] = useState(null)
 
@@ -80,7 +78,6 @@ export default function AdminCourses() {
     await loadData()
   }
 
-  // ── Lesson CRUD ──
   const [lessonModal, setLessonModal] = useState(null)
   const [lessonForm, setLessonForm] = useState({})
 
@@ -90,6 +87,7 @@ export default function AdminCourses() {
       name: '',
       description: '',
       video_id: '',
+      material_url: '',
       has_task: false,
       task_name: '',
       task_url: '',
@@ -108,10 +106,11 @@ export default function AdminCourses() {
     if (!lessonForm.name) return
     setSaving(true)
     try {
-      if (lessonForm.id) {
-        await updateLesson(lessonForm.id, lessonForm)
+      const { course_id, ...lessonData } = lessonForm
+      if (lessonData.id) {
+        await updateLesson(lessonData.id, lessonData)
       } else {
-        await createLesson(lessonForm)
+        await createLesson(lessonData)
       }
       setLessonModal(null)
       await loadData()
@@ -150,7 +149,6 @@ export default function AdminCourses() {
           const isOpen = expanded === course.id
           return (
             <div key={course.id} className="card" style={{ marginBottom: 16 }}>
-              {/* Course header */}
               <div className="card-header">
                 <div className="flex-center gap-10">
                   <div style={{ width: 44, height: 44, borderRadius: 10, background: course.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
@@ -173,7 +171,6 @@ export default function AdminCourses() {
                 </div>
               </div>
 
-              {/* Course content editor */}
               {isOpen && (
                 <div className="card-body">
                   {course.modules.map((mod, mi) => (
@@ -201,6 +198,7 @@ export default function AdminCourses() {
                                 <div className="lesson-name">{li + 1}. {l.name}</div>
                                 <div className="lesson-meta">
                                   {l.video_id ? '✓ Video' : '⚠ Sin video'}
+                                  {l.material_url ? ' · 📄 Material' : ''}
                                   {l.has_task ? ' · 📝 Tarea' : ''}
                                 </div>
                               </div>
@@ -215,7 +213,6 @@ export default function AdminCourses() {
                     </div>
                   ))}
 
-                  {/* Add module */}
                   {addingModule === course.id ? (
                     <div className="flex gap-8" style={{ marginTop: 8 }}>
                       <input
@@ -241,7 +238,6 @@ export default function AdminCourses() {
         })
       )}
 
-      {/* Course modal */}
       {modal?.type === 'course' && (
         <Modal
           title={form.id ? 'Editar curso' : 'Nuevo curso'}
@@ -286,7 +282,6 @@ export default function AdminCourses() {
         </Modal>
       )}
 
-      {/* Lesson modal */}
       {lessonModal && (
         <Modal
           title={lessonModal.type === 'add' ? 'Nueva clase' : 'Editar clase'}
@@ -307,7 +302,11 @@ export default function AdminCourses() {
             <input className="form-input" value={lessonForm.video_id || ''} onChange={e => setLessonForm(f => ({ ...f, video_id: e.target.value }))} placeholder="Ej: dQw4w9WgXcQ o https://youtu.be/..." />
             <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>Acepta el ID completo o la URL de YouTube (privado/no listado/público)</div>
           </div>
-
+          <div className="form-group">
+            <label className="form-label">📄 Material adicional (PDF, Drive) — opcional</label>
+            <input className="form-input" value={lessonForm.material_url || ''} onChange={e => setLessonForm(f => ({ ...f, material_url: e.target.value }))} placeholder="https://drive.google.com/file/d/..." />
+            <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>Subí el PDF a Google Drive → Compartir → Cualquier persona con el link → copiá la URL</div>
+          </div>
           <div className="form-group">
             <label className="form-check" style={{ cursor: 'pointer' }}>
               <input type="checkbox" checked={!!lessonForm.has_task} onChange={e => setLessonForm(f => ({ ...f, has_task: e.target.checked }))} style={{ width: 'auto' }} />
