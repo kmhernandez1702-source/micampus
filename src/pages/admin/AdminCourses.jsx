@@ -86,16 +86,17 @@ export default function AdminCourses() {
 
   function openAddLesson(module) {
     setLessonForm({
-      module_id: module.id,
-      name: '',
-      description: '',
-      video_id: '',
-      has_task: false,
-      task_name: '',
-      task_url: '',
-      task_instructions: '',
-      order_index: module.lessons.length
-    })
+  module_id: module.id,
+  name: '',
+  description: '',
+  video_id: '',
+  material_url: '',
+  has_task: false,
+  task_name: '',
+  task_url: '',
+  task_instructions: '',
+  order_index: module.lessons.length
+})
     setLessonModal({ type: 'add', moduleName: module.name })
   }
 
@@ -306,6 +307,11 @@ export default function AdminCourses() {
             <label className="form-label">ID o URL del video de YouTube</label>
             <input className="form-input" value={lessonForm.video_id || ''} onChange={e => setLessonForm(f => ({ ...f, video_id: e.target.value }))} placeholder="Ej: dQw4w9WgXcQ o https://youtu.be/..." />
             <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>Acepta el ID completo o la URL de YouTube (privado/no listado/público)</div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Material adicional (PDF, Drive) — opcional</label>
+            <input className="form-input" value={lessonForm.material_url || ''} onChange={e => setLessonForm(f => ({ ...f, material_url: e.target.value }))} placeholder="https://drive.google.com/..." />
+            <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>Subí el PDF a Google Drive → compartir → cualquier persona con el link</div>
           </div>
 
           <div className="form-group">
