@@ -72,10 +72,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: 24, padding: '14px 16px', background: 'var(--teal-light)', borderRadius: 10, fontSize: 12, color: 'var(--teal)', lineHeight: 1.6 }}>
-          <strong style={{ display: 'block', marginBottom: 4 }}>💡 Acceso de prueba</strong>
-          Crea tu primer usuario admin directamente en Supabase Authentication y asígnale el rol <code>admin</code> en la tabla <code>profiles</code>.
-        </div>
+      
       </div>
     </div>
   )
